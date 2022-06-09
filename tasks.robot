@@ -30,8 +30,6 @@ ${csv_url}          https://robotsparebinindustries.com/orders.csv
 *** Test Cases ***
 Order robots from RobotSpareBin Industries Inc
     Directory Cleanup
-    Get The Program Author Name From Our Vault
-    ${username}=    Get The User Name
     Open the robot order website
 
     ${orders}=    Get orders
@@ -46,9 +44,6 @@ Order robots from RobotSpareBin Industries Inc
         Go to order another robot
     END
     Create a ZIP file of the receipts
-
-    Log Out And Close The Browser
-    Display the success dialog    USER_NAME=${username}
 
 
 *** Keywords ***
@@ -114,9 +109,6 @@ Go to order another robot
     Set Local Variable    ${btn_order_another_robot}    //*[@id="order-another"]
     Click Button    ${btn_order_another_robot}
 
-Log Out And Close The Browser
-    Close Browser
-
 Create a Zip File of the Receipts
     Archive Folder With ZIP    ${pdf_folder}    ${zip_file}    recursive=True    include=*.pdf
 
@@ -134,19 +126,3 @@ Embed the robot screenshot to the receipt PDF file
     @{myfiles}=    Create List    ${IMG_FILE}
     Add Files To Pdf    ${myfiles}    ${PDF_FILE}    ${True}
     Close All Pdfs
-
-Get The Program Author Name From Our Vault
-    ${secret}=    Get Secret    mysecrets
-
-Get The User Name
-    Add heading    I am your RoboCorp Order Genie
-    Add text input    myname    label=What is thy name, oh sire?    placeholder=Give me some input here
-    ${result}=    Run dialog
-    RETURN    ${result.myname}
-
-Display the success dialog
-    [Arguments]    ${USER_NAME}
-    Add icon    Success
-    Add heading    Your orders have been processed
-    Add text    Dear ${USER_NAME} - all orders have been processed. Have a nice day!
-    Run dialog    title=Success
