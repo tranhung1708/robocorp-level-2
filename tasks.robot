@@ -16,15 +16,6 @@ Library           RPA.Dialogs
 Library           RPA.Robocloud.Secrets
 Library           OperatingSystem
 
-# I removed these as the previous setup would not look pretty when being used in combination with the rpa.dialogs work flow.
-#Suite Setup       Open the robot order website
-#Suite Teardown    Log Out And Close The Browser
-
-#
-# In order to run this program, you MUST change the devdata/env.json file. Its content only seems to accept an absolute
-# file name. This seems to be a RPA limitation.
-#  Addititionally, the venv setting in the .vscode/settings.json file needs to be changed.
-#
 
 *** Variables ***
 ${url}            https://robotsparebinindustries.com/#/robot-order
@@ -77,7 +68,6 @@ Directory Cleanup
 
     Empty Directory     ${img_folder}
     Empty Directory     ${pdf_folder}
-    Empty Directory     ${output_folder}
 
 Get orders
     Download    url=${csv_url}         target_file=${orders_file}    overwrite=True
@@ -167,11 +157,6 @@ Take a screenshot of the robot
     # This can happen at very throttled download speeds and results in an incomplete target image.
     # A preference would be to have a keyword such as "Wait until image has been downloaded" over this quick hack
     # but even Selenium does not support this natively. 
-    #
-    # Sorry mates - I mainly use Robot Framework for REST APIs. Web testing is not my primary domain :-)
-    #
-    Sleep   1sec
-    Log To Console                  Capturing Screenshot to ${fully_qualified_img_filename}
     Capture Element Screenshot      ${img_robot}    ${fully_qualified_img_filename}
     
     [Return]    ${orderid}  ${fully_qualified_img_filename}
@@ -211,16 +196,8 @@ Embed the robot screenshot to the receipt PDF file
     @{myfiles}=       Create List     ${IMG_FILE}:x=0,y=0
 
     # Add the files to the PDF
-    #
-    # Note:
-    #
-    # 'append' requires the latest RPAframework. Update the version in the conda.yaml file - otherwise,
-    # this will not work. The VSCode auto-generated file contains a version number that is way too old.
-    #
-    # an "append" always adds a NEW page to the file. I don't see a way to EMBED the image in the first page
-    # which contains the order data
     Add Files To PDF    ${myfiles}    ${PDF_FILE}     ${True}
-
+    
     Close PDF           ${PDF_FILE}
 
 Get The Program Author Name From Our Vault
